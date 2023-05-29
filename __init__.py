@@ -1,6 +1,5 @@
 from views import app
 import db.config as config
-import db.database
 
 if __name__ == '__main__':
     # 0 = mariadb completed

@@ -156,9 +156,18 @@ def license_student(id_student = None):
             next_page = int(request.args.get('page', default=0)) + 1
             previous_page = int(request.args.get('page', default=0)) - 1
 
-            subject_data = database_querys.database.query_licenses_plates_per_student(page, id_student)
-            return render_template('subject_student.html', student_id=id_student, subject_data=subject_data, next_page=next_page,
+            license_Data = database_querys.database.query_licenses_plates_per_student(page, id_student)
+            return render_template('subject_student.html', student_id=id_student, license_Data=license_Data, next_page=next_page,
                                    previous_page=previous_page)
+
+@app.route('/license/<int:id>/delete', methods = ['GET'])
+def remove_license(id = None):
+    app.config['title'] = "Remove Subject"
+    if "logged_in" in session and session['logged_in'] is True:
+        database_querys.database.remove_license(id)
+        return render_template('success.html', type=error_list["remove_subject"])
+    else:
+        return redirect('login')
 
 @app.route('/license/<int:student_id>/add', methods = ['GET', 'POST'])
 @app.route('/license/<int:id>/<int:student_id>/update', methods = ['GET', 'POST'])
@@ -167,31 +176,30 @@ def edit_subject_student(id = None, student_id = None):
     if "logged_in" in session and session['logged_in'] is True:
         if (id == None):
             if request.method == 'GET':
-                subject_data = database_querys.database.find_subject_student(student_id)
                 return render_template('add_subject_license.html', type="add")
             else:
-                subject_data = [
+                license_Data = [
                     student_id,
                     request.form['asignatura_id'],
                     request.form['calificacion'],
                     datetime.datetime.now(),
                     session['username']
                 ]
-                database_querys.database.insert_subject_student(subject_data)
+                database_querys.database.insert_subject_student(license_Data)
                 return render_template("success.html", type=error_list["add_subject_student"])
         else:
             if request.method == 'GET':
-                subject_data = database_querys.database.find_subject_student(student_id)
+                license_Data = database_querys.database.find_subject_student(student_id)
                 return render_template('add_subject_license.html',
                                        id=id,
-                                       estudiante_id=subject_data[1],
-                                       asignatura_id=subject_data[2],
-                                       calificacion=subject_data[3],
-                                       fecha_modificacion=subject_data[4],
-                                       usuario_modificacion=subject_data[5],
+                                       estudiante_id=license_Data[1],
+                                       asignatura_id=license_Data[2],
+                                       calificacion=license_Data[3],
+                                       fecha_modificacion=license_Data[4],
+                                       usuario_modificacion=license_Data[5],
                                        type="update")
             else:
-                subject_data = [
+                license_Data = [
                     request.form['estudiante_id'],
                     request.form['asignatura_id'],
                     request.form['calificacion'],
@@ -199,7 +207,7 @@ def edit_subject_student(id = None, student_id = None):
                     session['username'],
                     id
                 ]
-                database_querys.database.update_subject_student(subject_data)
+                database_querys.database.update_subject_student(license_Data)
                 return render_template("success.html", type=error_list["update_subject_student"])
     else:
         return redirect('login')
@@ -251,11 +259,11 @@ def login():
     else:
         login_username = [ request.form['username'] ]
 
-        hashed_password = database_querys.database.get_user_details(login_username)[2].encode('utf-8')
+        hashed_password = database_querys.database.get_user_details(login_username)
         hashed_password_transform = request.form['password'].encode('utf-8')
 
-        if(hashed_password is not None):
-            if bcrypt.checkpw(hashed_password_transform, hashed_password):
+        if(type(hashed_password) is not None):
+            if bcrypt.checkpw(hashed_password_transform, hashed_password[2].encode('utf-8')):
 
                 session['logged_in'] = True
                 session['username'] = request.form['username']
@@ -281,6 +289,7 @@ def register():
                 hashed_password
             ))
             session['logged_in'] = True
+            session['username'] = request.form['username']
             return redirect("student")
 
 @app.route('/logout', methods = ['GET', 'POST'])

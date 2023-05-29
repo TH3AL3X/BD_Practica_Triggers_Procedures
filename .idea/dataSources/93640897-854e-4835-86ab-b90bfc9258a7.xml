@@ -1382,10 +1382,10 @@
     <user id="517" parent="1" name="root">
       <Host>localhost</Host>
     </user>
-    <routine id="518" parent="511" name="Generar_Informe_Asignaturas">
+    <routine id="518" parent="511" name="Insertar_Informes">
       <Definer>root@localhost</Definer>
       <RoutineKind>procedure</RoutineKind>
-      <SourceTextLength>981</SourceTextLength>
+      <SourceTextLength>894</SourceTextLength>
     </routine>
     <table id="519" parent="511" name="asignaturas">
       <Engine>InnoDB</Engine>
@@ -1412,7 +1412,7 @@
       <CollationName>latin1_swedish_ci</CollationName>
     </table>
     <column id="525" parent="519" name="asignatura_id">
-      <AutoIncrement>3</AutoIncrement>
+      <AutoIncrement>4</AutoIncrement>
       <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1464,7 +1464,7 @@
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="536" parent="521" name="id">
-      <AutoIncrement>1</AutoIncrement>
+      <AutoIncrement>7</AutoIncrement>
       <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1529,7 +1529,7 @@
       <UnderlyingIndexName>id_estudiante</UnderlyingIndexName>
     </key>
     <column id="550" parent="523" name="id">
-      <AutoIncrement>1</AutoIncrement>
+      <AutoIncrement>7</AutoIncrement>
       <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1572,56 +1572,54 @@
     <index id="559" parent="523" name="estudiante_id">
       <ColNames>estudiante_id</ColNames>
       <Type>btree</Type>
-      <Unique>1</Unique>
     </index>
     <index id="560" parent="523" name="asignatura_id">
       <ColNames>asignatura_id</ColNames>
       <Type>btree</Type>
-      <Unique>1</Unique>
     </index>
     <key id="561" parent="523" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="562" parent="523" name="estudiante_id">
-      <UnderlyingIndexName>estudiante_id</UnderlyingIndexName>
-    </key>
-    <key id="563" parent="523" name="asignatura_id">
-      <UnderlyingIndexName>asignatura_id</UnderlyingIndexName>
-    </key>
-    <trigger id="564" parent="523" name="Validar_Calificacion_Insert">
+    <trigger id="562" parent="523" name="Validar_Calificacion_Insert">
       <Definer>root@localhost</Definer>
       <Events>I</Events>
-      <SourceTextLength>256</SourceTextLength>
-      <Turn>after-row</Turn>
+      <SourceTextLength>197</SourceTextLength>
+      <Turn>before-row</Turn>
     </trigger>
-    <trigger id="565" parent="523" name="Validar_Calificacion">
+    <trigger id="563" parent="523" name="Insertar_Informes_Updates">
       <Definer>root@localhost</Definer>
       <Events>U</Events>
-      <SourceTextLength>256</SourceTextLength>
-      <Turn>after-row</Turn>
+      <SourceTextLength>43</SourceTextLength>
+      <Turn>before-row</Turn>
     </trigger>
-    <column id="566" parent="524" name="id">
-      <AutoIncrement>9</AutoIncrement>
+    <trigger id="564" parent="523" name="Validar_Calificacion_Update">
+      <Definer>root@localhost</Definer>
+      <Events>U</Events>
+      <SourceTextLength>197</SourceTextLength>
+      <Turn>before-row</Turn>
+    </trigger>
+    <column id="565" parent="524" name="id">
+      <AutoIncrement>3</AutoIncrement>
       <DasType>int(11)|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="567" parent="524" name="username">
+    <column id="566" parent="524" name="username">
       <DasType>text|0s</DasType>
       <Position>2</Position>
     </column>
-    <column id="568" parent="524" name="password">
+    <column id="567" parent="524" name="password">
       <DasType>text|0s</DasType>
       <Position>3</Position>
     </column>
-    <index id="569" parent="524" name="PRIMARY">
+    <index id="568" parent="524" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="570" parent="524" name="PRIMARY">
+    <key id="569" parent="524" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

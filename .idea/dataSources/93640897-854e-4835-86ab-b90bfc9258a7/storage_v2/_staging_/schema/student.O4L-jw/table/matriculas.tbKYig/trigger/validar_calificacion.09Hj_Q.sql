@@ -1,5 +1,5 @@
 create definer = root@localhost trigger Validar_Calificacion
-    before update
+    after update
     on matriculas
     for each row
 BEGIN

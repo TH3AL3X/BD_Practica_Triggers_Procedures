@@ -2,7 +2,7 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/93640897-854e-4835-86ab-b90bfc9258a7/console_1.sql" dialect="MariaDB" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/93640897-854e-4835-86ab-b90bfc9258a7/console_2.sql" dialect="MariaDB" />
     <file url="file://$PROJECT_DIR$/db/mariadb.sql" dialect="MariaDB" />
-    <file url="file://$PROJECT_DIR$/db/sqlite.sql" dialect="SQLite" />
   </component>
 </project>

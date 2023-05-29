@@ -57,6 +57,13 @@ class database():
         connie.commit()
         connie.close()
 
+    def remove_license(id):
+        connie = engine_sql()
+        c = connie.cursor()
+        c.execute("""DELETE FROM Matriculas WHERE id={0}""".format(id))
+        connie.commit()
+        connie.close()
+
     def insert_subject(subject_details):
         connie = engine_sql()
         c = connie.cursor()
@@ -189,7 +196,7 @@ class database():
     def query_ratings(page):
         connie = engine_sql()
         c = connie.cursor()
-        c.execute("""SELECT * FROM Informes_asignaturas LIMIT ?, ?""", page)
+        c.execute("""SELECT DISTINCT nombre, calificacion_media FROM Informes_asignaturas LIMIT ?, ?""", page)
         ratings_data = c.fetchall()
         return ratings_data
 

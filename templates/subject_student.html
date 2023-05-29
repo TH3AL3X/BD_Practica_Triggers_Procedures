@@ -15,16 +15,18 @@
                       <th scope="col">Ratings</th>
                       <th scope="col">Last Modify</th>
                       <th scope="col">User modify</th>
+                      <th scope="col">Delete</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {% for subjects in subject_data %}
+                    {% for licenses in license_Data %}
                     <tr>
-                      <td><a class="btn btn-info" href="{{ url_for('edit_subject_student', id=subjects[0], student_id=student_id) }}">Edit {{ subjects[0] }}</a></td>
-                      <td>{{ subjects[2] }}</td>
-                      <td>{{ subjects[3] }}</td>
-                      <td>{{ subjects[4] }}</td>
-                      <td>{{ subjects[5] }}</td>
+                      <td><a class="btn btn-info" href="{{ url_for('edit_subject_student', id=licenses[0], student_id=student_id) }}">Edit {{ licenses[0] }}</a></td>
+                      <td>{{ licenses[2] }}</td>
+                      <td>{{ licenses[3] }}</td>
+                      <td>{{ licenses[4] }}</td>
+                      <td>{{ licenses[5] }}</td>
+                      <td><a class="btn btn-danger" style="" href="{{ url_for('remove_license', id=licenses[0]) }}">Remove subject</a></td>
                     </tr>
                   {% endfor %}
                   </tbody>

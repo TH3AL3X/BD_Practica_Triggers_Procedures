@@ -37,8 +37,8 @@
 
     CREATE TABLE IF NOT EXISTS Matriculas (
       id INT PRIMARY KEY AUTO_INCREMENT,
-      estudiante_id INT UNIQUE,
-      asignatura_id INT UNIQUE,
+      estudiante_id INT,
+      asignatura_id INT,
       calificacion DECIMAL(3, 1),
       fecha_modificacion TIMESTAMP,
       usuario_modificacion VARCHAR(50),
@@ -47,79 +47,72 @@
     );
 
     CREATE TRIGGER IF NOT EXISTS Validar_Calificacion_Insert
-    AFTER INSERT ON Matriculas
+    BEFORE INSERT ON Matriculas
     FOR EACH ROW
     BEGIN
-        UPDATE Matriculas SET calificacion =
-            CASE
-                WHEN NEW.calificacion < 0 THEN 0
-                WHEN NEW.calificacion > 10 THEN 10
-                ELSE NEW.calificacion
-            END
-        WHERE id = NEW.id;
+        IF NEW.calificacion < 0 THEN
+            SET NEW.calificacion = 0;
+        end if;
+        IF NEW.calificacion > 10 THEN
+            SET NEW.calificacion = 10;
+        END IF;
     END;
 
-    CREATE TRIGGER IF NOT EXISTS Validar_Calificacion
-    AFTER UPDATE ON Matriculas
+    CREATE TRIGGER IF NOT EXISTS Validar_Calificacion_Update
+    BEFORE UPDATE ON Matriculas
     FOR EACH ROW
     BEGIN
-        UPDATE Matriculas SET calificacion =
-            CASE
-                WHEN NEW.calificacion < 0 THEN 0
-                WHEN NEW.calificacion > 10 THEN 10
-                ELSE NEW.calificacion
-            END
-        WHERE id = NEW.id;
+        IF NEW.calificacion < 0 THEN
+            SET NEW.calificacion = 0;
+        end if;
+        IF NEW.calificacion > 10 THEN
+            SET NEW.calificacion = 10;
+        END IF;
     END;
+
+    DROP PROCEDURE Insertar_Informes;
 
     DELIMITER $$
 
-    CREATE PROCEDURE Generar_Informe_Asignaturas()
+    CREATE PROCEDURE Insertar_Informes()
     BEGIN
-        DECLARE done INT DEFAULT FALSE;
-        DECLARE asignatura_id INT;
-        DECLARE asignatura_nombre VARCHAR(255);
-        DECLARE calificacion_media DECIMAL(5, 2);
-        DECLARE cur CURSOR FOR
-            SELECT Asignaturas.asignatura_id, Asignaturas.nombre, AVG(Matriculas.calificacion)
-            FROM Asignaturas
-            LEFT JOIN Matriculas ON Asignaturas.asignatura_id = Asignaturas.asignatura_id
-            GROUP BY Asignaturas.asignatura_id;
-        DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+        DECLARE completado INT DEFAULT FALSE;
+        DECLARE nombre VARCHAR(50);
+        DECLARE calificacion_media FLOAT;
 
-        TRUNCATE TABLE Informes_Asignaturas;
+        DECLARE datos_asignaturas CURSOR FOR
+            SELECT Asignaturas.nombre, AVG(Matriculas.calificacion) FROM Asignaturas
+               INNER JOIN Matriculas ON Asignaturas.asignatura_id = Asignaturas.asignatura_id GROUP BY Asignaturas.asignatura_id;
+        DECLARE CONTINUE HANDLER FOR NOT FOUND SET completado = TRUE;
 
-        OPEN cur;
+        DELETE FROM informes_asignaturas WHERE id<0;
+
+        OPEN datos_asignaturas;
         read_loop: LOOP
-            FETCH cur INTO asignatura_id, asignatura_nombre, calificacion_media;
-            IF done THEN
-                LEAVE read_loop;
+            FETCH datos_asignaturas INTO nombre, calificacion_media;
+            IF completado THEN
+              LEAVE read_loop;
             END IF;
-            INSERT INTO Informes_Asignaturas (id, nombre, calificacion_media)
-            VALUES (asignatura_id, asignatura_nombre, calificacion_media);
-        END LOOP;
-        CLOSE cur;
+            INSERT INTO informes_asignaturas (nombre, calificacion_media) VALUES (nombre, calificacion_media);
+        end loop;
+
+        CLOSE datos_asignaturas;
+
     END $$
 
     DELIMITER ;
 
-    CREATE TRIGGER Actualizar_Informes_Insert
-    AFTER INSERT ON Matriculas
-    FOR EACH ROW
-    BEGIN
-        CALL Generar_Informe_Asignaturas();
+    CREATE TRIGGER IF NOT EXISTS Insertar_Informes_Updates
+        BEFORE UPDATE ON Matriculas
+        FOR EACH ROW
+        BEGIN
+            call Insertar_Informes();
     END;
 
-    CREATE TRIGGER Actualizar_Informes_Update
-    AFTER UPDATE ON Matriculas
-    FOR EACH ROW
-    BEGIN
-        CALL Generar_Informe_Asignaturas();
+    CREATE TRIGGER IF NOT EXISTS Insertar_Informes_Updates
+        AFTER INSERT ON Matriculas
+        FOR EACH ROW
+        BEGIN
+            call Insertar_Informes();
     END;
 
-    CREATE TRIGGER Actualizar_Informes_Delete
-    AFTER DELETE ON Matriculas
-    FOR EACH ROW
-    BEGIN
-        CALL Generar_Informe_Asignaturas();
-    END;
