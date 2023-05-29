@@ -7,7 +7,7 @@ connie = mariadb.connect(host="localhost",
                 database="student")
 c = connie.cursor()
 
-with open('db/mariadb.sql', 'r') as sql_file:
+with open('mariadb.sql', 'r') as sql_file:
      sql_script = sql_file.read()
 
 c.execute(sql_script)
